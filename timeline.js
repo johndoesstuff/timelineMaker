@@ -14,6 +14,7 @@ window.timeline = {
 function Timeframe(date1, date2) {
 	this.start = date1;
 	this.end = date2;
+	this.z = 0;
 }
 
 function addDates() {
@@ -26,18 +27,51 @@ function addDates() {
 	}
 
 	window.timeline.elements.push(new Timeframe(date1, date2));
+
+	renderTimeline();
 }
 
 function renderTimeline() {
-	const days = Math.ceil((timeline.startDisplay.getTime() - timeline.endDisplay.getTime()) / dayms);
+	if (timeline.elements.length > 0) timeline.endDisplay = timeline.elements.sort((a, b) => (a.start.getTime() - b.start.getTime()))[0].start;
+
 	let c = 0;
-	for (let i = timeline.endDisplay.getTime(); i < timeline.startDisplay.getTime(); i += dayms) {
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	for (let i = timeline.endDisplay.getTime(); i <= timeline.startDisplay.getTime(); i += dayms) {
 		let day = new Date(i);
 		let dayEnd = new Date(i + dayms);
-		ctx.fillRect(dateToX(day), 0, dateToX(dayEnd), 100);
+		ctx.fillStyle = (["#ddd", "#eee"])[c];
+		ctx.fillRect(dateToX(day), 0, dateToX(day) - dateToX(dayEnd), canvas.height);
 		c++;
 		c %= 2;
-		ctx.fillStyle = (["#ddd", "#eee"])[c];
+	}
+
+	formatTimeline();
+
+	for (let i = 0; i < timeline.elements.length; i++) {
+		const timeframe = timeline.elements[i];
+		let start = dateToX(timeframe.start);
+		let end = dateToX(timeframe.end);
+		ctx.fillStyle = "blue";
+		ctx.fillRect(start, timeframe.z*30, end-start, 30);
+	}
+}
+
+function formatTimeline() {
+	let unformattedElements = timeline.elements;
+	let z = 0;
+	while (unformattedElements.length > 0 && z < 10) {
+		let t = timeline.endDisplay.getTime();
+		while (t < timeline.startDisplay.getTime()) {
+			let soonest = unformattedElements.sort((a, b) => a.start.getTime() - b.start.getTime())
+			soonest = soonest.filter(e => e.start.getTime() > t);
+			if (soonest.length == 0) break;
+			soonest = soonest[0];
+			soonest.z = z;
+			t = soonest.end.getTime();
+			const index = unformattedElements.indexOf(soonest);
+			unformattedElements = unformattedElements.slice(0, index).concat(unformattedElements.slice(index + 1));
+		}
+		z++;
 	}
 }
 
@@ -46,7 +80,7 @@ function dateToX(date) {
 	let startms = window.timeline.startDisplay.getTime();
 	let endms = window.timeline.endDisplay.getTime();
 
-	let t = (datems-startms)/(endms-startms);
+	let t = (datems-endms)/(startms-endms);
 
 	return canvas.width*t;
 }
