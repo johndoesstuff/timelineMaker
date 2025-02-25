@@ -36,10 +36,11 @@ button:hover {
 	background-color: #0056b3;
 }
 
-canvas {
-	border: 1px solid black;
+#timeline {
 	margin-top: 20px;
 	display: block;
 	width: 70vw;
+	height: 121px;
+	background-color: #eee;
 }
 
