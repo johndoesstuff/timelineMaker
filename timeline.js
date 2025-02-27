@@ -12,22 +12,25 @@ window.timeline = {
 	endDisplay: new Date(new Date() - yearms),
 };
 
-function Timeframe(date1, date2) {
+function Timeframe(date1, date2, title) {
 	this.start = date1;
 	this.end = date2;
 	this.z = 0;
+	this.title = title;
 }
 
 function addDates() {
 	const date1 = new Date(document.getElementById('date1').value);
 	const date2 = new Date(document.getElementById('date2').value);
 
+	const title = document.getElementById('textInput').value;
+
 	if (isNaN(date1) || isNaN(date2)) {
 		alert("Please enter valid dates.");
 		return;
 	}
 
-	window.timeline.elements.push(new Timeframe(date1, date2));
+	window.timeline.elements.push(new Timeframe(date1, date2, title));
 
 	renderTimeline();
 }
@@ -41,7 +44,6 @@ function renderTimeline() {
 	timelineContainer.style.position = "relative";
 	timelineContainer.style.display = "flex";
 	timelineContainer.style.flexDirection = "column";
-
 
 	/*for (let i = timeline.endDisplay.getTime(); i <= timeline.startDisplay.getTime(); i += dayms) {
 		let day = new Date(i);
@@ -68,6 +70,8 @@ function renderTimeline() {
 		eventDiv.style.backgroundColor = "rgba(82, 108, 237, 0.78)";
 		eventDiv.style.border = "1px solid rgba(0, 0, 0, 0.3)";
 		eventDiv.style.borderRadius = "6px";
+
+		eventDiv.title = timeframe.title;
 
 		timelineContainer.appendChild(eventDiv);
 	}

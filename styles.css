@@ -36,6 +36,12 @@ button:hover {
 	background-color: #0056b3;
 }
 
+input {
+	border: solid 1px black;
+	padding: 10px 15px;
+	border-radius: 5px;
+}
+
 #timeline {
 	margin-top: 20px;
 	display: block;
